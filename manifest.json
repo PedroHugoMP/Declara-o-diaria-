@@ -1,0 +1,9 @@
+{
+  "name": "30 Motivos para Amar Você",
+  "short_name": "30 Motivos",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fff7fb",
+  "theme_color": "#e86fb8",
+  "icons": []
+}
