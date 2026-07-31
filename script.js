@@ -1,40 +1,40 @@
 const photoFolder = "fotos";
 const defaultPhotoCatalog = [
-  "WhatsApp Image 2026-07-05 at 1.47.40 PM.jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.09 PM (1).jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.09 PM.jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM (1).jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM (2).jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM (3).jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM (4).jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM (5).jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM.jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.11 PM (1).jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.11 PM (2).jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.11 PM.jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.12 PM.jpeg",
-  "WhatsApp Image 2026-07-30 at 4.24.13 PM.jpeg",
-  "WhatsApp Image 2026-07-30 at 4.36.50 PM.jpeg",
-  "WhatsApp Image 2026-07-30 at 4.37.26 PM.jpeg"
+  "Foto.1.jpeg",
+  "Foto.2.jpeg",
+  "Foto.3.jpeg",
+  "Foto.4.jpeg",
+  "Foto.5.jpeg",
+  "Foto.6.jpeg",
+  "Foto.7.jpeg",
+  "Foto.8.jpeg",
+  "Foto.9.jpeg",
+  "Foto.10.jpeg",
+  "Foto.11.jpeg",
+  "Foto.12.jpeg",
+  "Foto.13.jpeg",
+  "Foto.14.jpeg",
+  "Foto.15.jpeg",
+  "Foto.16.jpeg"
 ];
 
 const photoMessages = {
-  "WhatsApp Image 2026-07-05 at 1.47.40 PM.jpeg": "Porque seu abraço é o lugar onde encontro paz.",
-  "WhatsApp Image 2026-07-30 at 4.24.09 PM (1).jpeg": "Porque seu sorriso ilumina até os dias mais cinzentos.",
-  "WhatsApp Image 2026-07-30 at 4.24.09 PM.jpeg": "Porque sua presença faz o mundo parecer mais bonito.",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM (1).jpeg": "Porque você torna meus momentos especiais em memórias preciosas.",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM (2).jpeg": "Porque a sua voz me acalma como nenhuma outra.",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM (3).jpeg": "Porque eu amo a forma como você cuida do meu coração.",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM (4).jpeg": "Porque você transforma carinho em algo quase mágico.",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM (5).jpeg": "Porque seu jeito me faz sentir em casa.",
-  "WhatsApp Image 2026-07-30 at 4.24.10 PM.jpeg": "Porque cada conversa sua me aproxima de você.",
-  "WhatsApp Image 2026-07-30 at 4.24.11 PM (1).jpeg": "Porque seu amor é a minha música favorita.",
-  "WhatsApp Image 2026-07-30 at 4.24.11 PM (2).jpeg": "Porque eu nunca canso de te admirar.",
-  "WhatsApp Image 2026-07-30 at 4.24.11 PM.jpeg": "Porque você é a razão dos meus melhores sentimentos.",
-  "WhatsApp Image 2026-07-30 at 4.24.12 PM.jpeg": "Porque seu olhar transmite tudo o que meu coração sente.",
-  "WhatsApp Image 2026-07-30 at 4.24.13 PM.jpeg": "Porque você me ensina a amar com mais leveza.",
-  "WhatsApp Image 2026-07-30 at 4.36.50 PM.jpeg": "Porque o seu carinho me faz crescer cada dia mais.",
-  "WhatsApp Image 2026-07-30 at 4.37.26 PM.jpeg": "Porque esses eram apenas 30 motivos... e eu ainda tenho milhares para te dizer."
+  "Foto.1.jpeg": "Porque seu abraço é o lugar onde encontro paz.",
+  "Foto.2.jpeg": "Porque seu sorriso ilumina até os dias mais cinzentos.",
+  "Foto.3.jpeg": "Porque sua presença faz o mundo parecer mais bonito.",
+  "Foto.4.jpeg": "Porque você torna meus momentos especiais em memórias preciosas.",
+  "Foto.5.jpeg": "Porque a sua voz me acalma como nenhuma outra.",
+  "Foto.6.jpeg": "Porque eu amo a forma como você cuida do meu coração.",
+  "Foto.7.jpeg": "Porque você transforma carinho em algo quase mágico.",
+  "Foto.8.jpeg": "Porque seu jeito me faz sentir em casa.",
+  "Foto.9.jpeg": "Porque cada conversa sua me aproxima de você.",
+  "Foto.10.jpeg": "Porque seu amor é a minha música favorita.",
+  "Foto.11.jpeg": "Porque eu nunca canso de te admirar.",
+  "Foto.12.jpeg": "Porque você é a razão dos meus melhores sentimentos.",
+  "Foto.13.jpeg": "Porque seu olhar transmite tudo o que meu coração sente.",
+  "Foto.14.jpeg": "Porque você me ensina a amar com mais leveza.",
+  "Foto.15.jpeg": "Porque o seu carinho me faz crescer cada dia mais.",
+  "Foto.16.jpeg": "Porque esses eram apenas 30 motivos... e eu ainda tenho milhares para te dizer."
 };
 
 const state = {
@@ -61,6 +61,14 @@ const elements = {
 
 function formatDateKey(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function resolvePhotoUrl(photo) {
+  if (!photo) return "";
+  if (/^https?:\/\//i.test(photo) || photo.startsWith("data:")) {
+    return photo;
+  }
+  return `${photoFolder}/${encodeURIComponent(photo)}`;
 }
 
 function getDaysTogether() {
@@ -133,7 +141,17 @@ async function loadPhotoCatalog() {
     if (!response.ok) throw new Error("manifest unavailable");
     const data = await response.json();
     if (Array.isArray(data.photos) && data.photos.length > 0) {
-      return data.photos;
+      return data.photos
+        .map((photo) => {
+          if (typeof photo === "string") {
+            return photo;
+          }
+          if (photo && typeof photo === "object") {
+            return photo.src || photo.url || photo.name || "";
+          }
+          return "";
+        })
+        .filter(Boolean);
     }
   } catch (error) {
     return defaultPhotoCatalog;
@@ -223,8 +241,10 @@ function renderReason() {
   elements.dayLabel.textContent = "Hoje";
 
   const image = new Image();
-  const safePhoto = encodeURIComponent(state.selectedPhoto || "");
-  image.src = `${photoFolder}/${safePhoto}`;
+  const fallbackPhoto = defaultPhotoCatalog.find((photo) => typeof photo === "string" && !/^https?:\/\//i.test(photo) && !photo.startsWith("data:")) || defaultPhotoCatalog[0];
+  const fallbackUrl = resolvePhotoUrl(fallbackPhoto);
+  const selectedUrl = resolvePhotoUrl(state.selectedPhoto);
+
   image.onload = () => {
     elements.photo.classList.add("is-fading");
     setTimeout(() => {
@@ -233,6 +253,19 @@ function renderReason() {
       elements.photo.classList.remove("is-fading");
     }, 180);
   };
+
+  image.onerror = () => {
+    if (image.src !== fallbackUrl) {
+      image.src = fallbackUrl;
+      return;
+    }
+
+    elements.photo.src = fallbackUrl;
+    elements.photo.alt = "Foto do dia indisponível";
+    elements.photo.classList.remove("is-fading");
+  };
+
+  image.src = selectedUrl;
 
   if (elements.specialTitle && elements.specialText) {
     if (specialMessage) {
@@ -318,7 +351,7 @@ function initSpotifyPlayer() {
   const hint = document.getElementById("spotify-hint");
   if (!iframe) return;
 
-  const playlistUrl = "https://open.spotify.com/playlist/0OIk5e0hm5NVgvOqGqYHBg?si=f443d9a5057346e0";
+  const playlistUrl = "https://open.spotify.com/playlist/1llw3TDJxgIloAVXuGzLNA?si=e91c393fca2c4416";
   const baseSrc = iframe.getAttribute("src") || "";
   const autoplaySrc = baseSrc.includes("autoplay=")
     ? baseSrc.replace(/autoplay=[^&]+/, "autoplay=1")
