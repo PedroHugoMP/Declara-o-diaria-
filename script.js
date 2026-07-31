@@ -43,6 +43,8 @@ const state = {
   messageHistory: []
 };
 
+let activeHearts = 0;
+
 const elements = {
   dayLabel: document.getElementById("day-label"),
   reasonTitle: document.getElementById("reason-title"),
@@ -244,34 +246,46 @@ function renderReason() {
 }
 
 function createHeartBurst(x, y) {
-  const burstCount = 30 + Math.floor(Math.random() * 10);
   const symbols = ["💖", "💗", "❤️", "💘", "💝", "💞"];
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const burstCount = prefersReducedMotion
+    ? 8
+    : isMobile
+      ? 10 + Math.floor(Math.random() * 4)
+      : 16 + Math.floor(Math.random() * 6);
+  const maxConcurrentHearts = 72;
+  const heartsToCreate = Math.min(burstCount, Math.max(0, maxConcurrentHearts - activeHearts));
 
+  if (heartsToCreate <= 0) {
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
   const originX = Math.min(Math.max(x, 24), viewportWidth - 24);
   const originY = Math.min(Math.max(y, 24), viewportHeight - 24);
   const centerX = viewportWidth / 2;
   const centerY = viewportHeight / 2;
 
-  for (let index = 0; index < burstCount; index += 1) {
+  for (let index = 0; index < heartsToCreate; index += 1) {
     const heart = document.createElement("span");
     heart.className = "heart-burst";
     heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
 
-    const angle = (Math.PI * 2 * index) / burstCount + (Math.random() - 0.5) * 0.45;
-    const spread = isMobile ? 0.85 + Math.random() * 0.25 : 0.95 + Math.random() * 0.25;
-    const offsetX = Math.cos(angle) * viewportWidth * spread * 0.5;
-    const offsetY = Math.sin(angle) * viewportHeight * spread * 0.5;
-    const driftX = (Math.random() - 0.5) * (isMobile ? 560 : 720);
-    const driftY = (Math.random() - 0.5) * (isMobile ? 560 : 720);
-    const size = isMobile ? 0.9 + Math.random() * 1 : 1 + Math.random() * 1.3;
-    const duration = 1.4 + Math.random() * 1.1;
-    const opacity = 0.45 + Math.random() * 0.5;
+    const angle = (Math.PI * 2 * index) / heartsToCreate + (Math.random() - 0.5) * 0.45;
+    const spread = isMobile ? 0.7 + Math.random() * 0.16 : 0.8 + Math.random() * 0.16;
+    const offsetX = Math.cos(angle) * viewportWidth * spread * 0.44;
+    const offsetY = Math.sin(angle) * viewportHeight * spread * 0.44;
+    const driftX = (Math.random() - 0.5) * (isMobile ? 440 : 560);
+    const driftY = (Math.random() - 0.5) * (isMobile ? 440 : 560);
+    const size = isMobile ? 0.8 + Math.random() * 0.7 : 0.9 + Math.random() * 0.8;
+    const duration = 1.2 + Math.random() * 0.7;
+    const opacity = 0.4 + Math.random() * 0.35;
 
-    const startX = Math.min(Math.max(centerX + offsetX, 12), viewportWidth - 28);
-    const startY = Math.min(Math.max(centerY + offsetY, 12), viewportHeight - 28);
+    const startX = Math.min(Math.max(originX + offsetX, 12), viewportWidth - 28);
+    const startY = Math.min(Math.max(originY + offsetY, 12), viewportHeight - 28);
 
     heart.style.left = `${startX}px`;
     heart.style.top = `${startY}px`;
@@ -280,13 +294,22 @@ function createHeartBurst(x, y) {
     heart.style.opacity = `${opacity}`;
     heart.style.setProperty("--drift-x", `${driftX}px`);
     heart.style.setProperty("--drift-y", `${driftY}px`);
-    heart.style.setProperty("--rotate", `${(Math.random() - 0.5) * 55}deg`);
-    heart.style.setProperty("--scale-start", `${0.65 + Math.random() * 0.3}`);
-    heart.style.setProperty("--scale-end", `${1.2 + Math.random() * 0.35}`);
+    heart.style.setProperty("--rotate", `${(Math.random() - 0.5) * 45}deg`);
+    heart.style.setProperty("--scale-start", `${0.7 + Math.random() * 0.2}`);
+    heart.style.setProperty("--scale-end", `${1.05 + Math.random() * 0.2}`);
 
-    elements.heartLayer.appendChild(heart);
-    setTimeout(() => heart.remove(), duration * 1000 + 140);
+    fragment.appendChild(heart);
+    activeHearts += 1;
+
+    window.setTimeout(() => {
+      if (heart.isConnected) {
+        heart.remove();
+      }
+      activeHearts = Math.max(0, activeHearts - 1);
+    }, duration * 1000 + 140);
   }
+
+  elements.heartLayer.appendChild(fragment);
 }
 
 function initSpotifyPlayer() {
