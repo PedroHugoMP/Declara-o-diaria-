@@ -299,6 +299,34 @@ body::before {
   box-shadow: 0 24px 50px rgba(143, 90, 183, 0.2);
 }
 
+.future-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  min-height: 220px;
+}
+
+.future-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.future-card p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.future-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
 .spotify-btn {
   padding: 9px 14px;
   font-size: 0.95rem;

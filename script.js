@@ -1,21 +1,21 @@
 const photoFolder = "fotos";
 const defaultPhotoCatalog = [
-  "Foto.1.jpeg",
-  "Foto.2.jpeg",
-  "Foto.3.jpeg",
-  "Foto.4.jpeg",
-  "Foto.5.jpeg",
-  "Foto.6.jpeg",
-  "Foto.7.jpeg",
-  "Foto.8.jpeg",
-  "Foto.9.jpeg",
-  "Foto.10.jpeg",
-  "Foto.11.jpeg",
-  "Foto.12.jpeg",
-  "Foto.13.jpeg",
-  "Foto.14.jpeg",
-  "Foto.15.jpeg",
-  "Foto.16.jpeg"
+  "WhatsApp Image 2026-07-05 at 1.47.40 PM.jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.09 PM (1).jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.09 PM.jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.10 PM (1).jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.10 PM (2).jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.10 PM (3).jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.10 PM (4).jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.10 PM (5).jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.10 PM.jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.11 PM (1).jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.11 PM (2).jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.11 PM.jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.12 PM.jpeg",
+  "WhatsApp Image 2026-07-30 at 4.24.13 PM.jpeg",
+  "WhatsApp Image 2026-07-30 at 4.36.50 PM.jpeg",
+  "WhatsApp Image 2026-07-30 at 4.37.26 PM.jpeg"
 ];
 
 const photoMessages = {
@@ -132,12 +132,8 @@ function ensureInitialState() {
 }
 
 async function loadPhotoCatalog() {
-  if (window.location.protocol === "file:") {
-    return defaultPhotoCatalog;
-  }
-
   try {
-    const response = await fetch(`${photoFolder}/photos.json`);
+    const response = await fetch(`${photoFolder}/photos.json`, { cache: "no-store" });
     if (!response.ok) throw new Error("manifest unavailable");
     const data = await response.json();
     if (Array.isArray(data.photos) && data.photos.length > 0) {
