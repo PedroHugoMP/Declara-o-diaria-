@@ -44,6 +44,18 @@ const state = {
 };
 
 let activeHearts = 0;
+let albumPhotoCatalog = defaultPhotoCatalog;
+let albumPhotoAssignments = new Map();
+let albumPageIndex = 0;
+let albumIsFlipping = false;
+let albumLastFocusedElement = null;
+let albumPressTimer = null;
+let albumLongPressActive = false;
+let albumPressImage = null;
+let albumZoomImage = null;
+let albumZoomParent = null;
+let albumZoomNextSibling = null;
+let albumEmojiTimer = null;
 
 const elements = {
   dayLabel: document.getElementById("day-label"),
@@ -58,6 +70,177 @@ const elements = {
   heartLayer: document.getElementById("heart-layer"),
   canvas: document.getElementById("bg-canvas")
 };
+
+const albumElements = {
+  modal: document.getElementById("album-modal"),
+  book: document.getElementById("album-book"),
+  cover: document.querySelector(".album-cover"),
+  spread: document.getElementById("album-spread"),
+  openButton: document.getElementById("open-album-btn"),
+  closeButton: document.getElementById("album-close-btn"),
+  restartButton: document.getElementById("album-restart-btn"),
+  previousButton: document.getElementById("album-prev-btn"),
+  nextButton: document.getElementById("album-next-btn"),
+  indicator: document.getElementById("album-page-indicator"),
+  emojiLayer: document.getElementById("album-emoji-layer")
+};
+
+const albumPages = [
+  {
+    type: "spread",
+    left: {
+      layout: "intro",
+      eyebrow: "I",
+      title: "PEDRO & CAIO",
+      text: "Duas pessoas, um caminho e uma história que continua escolhendo ficar.",
+      label: "JUNTOS HA",
+      counter: true
+    },
+    right: {
+      layout: "letter",
+      title: "Para Caio,",
+      paragraphs: [
+        "Prâna, a energia divina que orienta o homem, que o mantém de pé, não acredito no além mas o mais perto que cheguei dele foi por você.",
+        "Entre músicas e conversas conheci a força que me movimenta.",
+        "Obrigado por ser minha Prâna."
+      ],
+      image: 0,
+      date: "30.05.2026",
+      signature: "Com amor, Pedro"
+    }
+  },
+  {
+    type: "spread",
+    left: {
+      layout: "photo-feature",
+      eyebrow: "II",
+      title: "O primeiro brilho",
+      text: "Aquele tipo de instante que parece pequeno, mas muda o desenho inteiro dos dias.",
+      image: 1,
+      caption: "um instante guardado"
+    },
+    right: {
+      layout: "photo-poster",
+      eyebrow: "III",
+      title: "Brilhando juntos",
+      text: "Quando a gente se encontra, até o espelho vira testemunha.",
+      image: 2,
+      caption: "a nossa melhor versao"
+    }
+  },
+  {
+    type: "spread",
+    left: {
+      layout: "collage",
+      eyebrow: "IV",
+      title: "Entre risos e planos",
+      text: "A vida fica mais bonita quando tem uma pessoa para dividir os detalhes.",
+      images: [3, 4, 5]
+    },
+    right: {
+      layout: "quote",
+      title: "O amor mora nos detalhes",
+      quote: "Não foi um momento grandioso. Foi a soma delicada de todos eles.",
+      detail: "Conversas longas. Olhares demorados. A vontade de contar tudo.",
+      image: 6
+    }
+  },
+  {
+    type: "spread",
+    left: {
+      layout: "star-map",
+      eyebrow: "V",
+      title: "Alinhamento Milenar",
+      text: "Três Rios, RJ, Brasil",
+      date: "30 de maio de 2026",
+      coordinates: "22° 07' 45\" S  |  43° 12' 28\" W",
+      image: "Constelação.jpeg"
+    },
+    right: {
+      layout: "memory",
+      eyebrow: "VI",
+      title: "A nossa constelação",
+      text: "Em algum ponto entre uma música e outra, o universo fez a gentileza de cruzar nossos caminhos.",
+      image: 7,
+      caption: "um ceu so nosso"
+    }
+  },
+  {
+    type: "spread",
+    left: {
+      layout: "photo-full",
+      eyebrow: "VII",
+      title: "Um momento que o tempo parou",
+      image: 8,
+      caption: "e eu escolheria de novo"
+    },
+    right: {
+      layout: "note",
+      title: "Para guardar",
+      text: "Que a gente nunca perca a curiosidade de descobrir o outro de novo. Há sempre uma nova página esperando por nós.",
+      label: "NOTA DE RODAPE",
+      detail: "feito de memoria, musica e presenca"
+    }
+  },
+  {
+    type: "spread",
+    left: {
+      layout: "polaroid",
+      eyebrow: "VIII",
+      title: "Pequenas provas",
+      text: "O amor também é lembrar da foto, do lugar e da piada que ninguém mais entenderia.",
+      image: 10,
+      caption: "so a gente entende"
+    },
+    right: {
+      layout: "photo-feature",
+      eyebrow: "IX",
+      title: "A caminho do sempre",
+      text: "Ainda temos muitos lugares para conhecer e tantas páginas para preencher.",
+      image: 11,
+      caption: "proximo capitulo"
+    }
+  },
+  {
+    type: "spread",
+    left: {
+      layout: "letter",
+      eyebrow: "X",
+      title: "Uma promessa simples",
+      paragraphs: [
+        "Eu prometo prestar atenção nos seus detalhes.",
+        "Celebrar suas pequenas vitórias e ficar por perto nos dias difíceis.",
+        "Prometo continuar escolhendo você."
+      ],
+      signature: "Sempre seu"
+    },
+    right: {
+      layout: "photo-feature",
+      eyebrow: "XI",
+      title: "Mil motivos depois",
+      text: "Esses eram apenas alguns motivos. O resto a gente escreve vivendo.",
+      image: 13,
+      caption: "continua..."
+    }
+  },
+  {
+    type: "spread",
+    left: {
+      layout: "closing",
+      eyebrow: "XII",
+      title: "Para sempre",
+      text: "A nossa história não cabe num álbum só. Ainda bem.",
+      counter: true
+    },
+    right: {
+      layout: "photo-final",
+      title: "Pedro & Caio",
+      text: "O melhor ainda esta sendo escrito.",
+      image: 15,
+      caption: "fim? nunca."
+    }
+  }
+];
 
 function formatDateKey(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -468,14 +651,395 @@ function initParticles() {
   animate();
 }
 
+function getAlbumPhoto(photoReference) {
+  if (albumPhotoAssignments.has(photoReference)) {
+    return albumPhotoAssignments.get(photoReference);
+  }
+  if (typeof photoReference === "number") {
+    return albumPhotoCatalog[photoReference] || defaultPhotoCatalog[photoReference] || "";
+  }
+  return photoReference || "";
+}
+
+function shuffleAlbumPhotos(photos) {
+  const shuffled = [...photos];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+  return shuffled;
+}
+
+function collectAlbumPhotoReferences(page) {
+  const references = [];
+  const collect = (panel) => {
+    if (panel.image !== undefined) references.push(panel.image);
+    if (Array.isArray(panel.images)) references.push(...panel.images);
+  };
+  collect(page.left);
+  collect(page.right);
+  return references;
+}
+
+function prepareAlbumPhotos() {
+  albumPhotoAssignments = new Map();
+  const fixedReferences = new Set();
+  const fixedPageIndexes = new Set([5, 6, 7]);
+
+  albumPages.forEach((page, pageIndex) => {
+    if (fixedPageIndexes.has(pageIndex)) {
+      collectAlbumPhotoReferences(page).forEach((reference) => fixedReferences.add(reference));
+    }
+  });
+
+  const fixedPhotos = new Set([...fixedReferences].map((reference) => {
+    if (typeof reference === "number") return albumPhotoCatalog[reference];
+    return reference;
+  }).filter(Boolean));
+  const availablePhotos = shuffleAlbumPhotos(albumPhotoCatalog.filter((photo) => !fixedPhotos.has(photo)));
+  let nextPhotoIndex = 0;
+
+  albumPages.forEach((page, pageIndex) => {
+    if (fixedPageIndexes.has(pageIndex)) return;
+    collectAlbumPhotoReferences(page).forEach((reference) => {
+      if (typeof reference === "string") return;
+      if (!albumPhotoAssignments.has(reference)) {
+        const nextPhoto = availablePhotos[nextPhotoIndex % availablePhotos.length];
+        albumPhotoAssignments.set(reference, nextPhoto || albumPhotoCatalog[0] || "");
+        nextPhotoIndex += 1;
+      }
+    });
+  });
+}
+
+function albumImageMarkup(photoReference, alt, className = "") {
+  const photo = getAlbumPhoto(photoReference);
+  if (!photo) {
+    return `<div class="album-photo-placeholder ${className}" role="img" aria-label="Fotografia ainda nao adicionada"><span>✦</span><small>fotografia em breve</small></div>`;
+  }
+
+  return `<div class="album-photo-wrap ${className}"><img data-album-image src="${resolvePhotoUrl(photo)}" alt="${alt}" loading="lazy" /></div>`;
+}
+
+function renderAlbumPanel(page, side) {
+  const image = page.image !== undefined ? albumImageMarkup(page.image, page.title || "Memoria do album") : "";
+  const counter = page.counter ? `<strong class="album-counter">${getDaysTogether()} <span>dias</span></strong>` : "";
+  const eyebrow = page.eyebrow ? `<span class="album-page-eyebrow">${page.eyebrow}</span>` : "";
+  const paragraphs = page.paragraphs ? page.paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join("") : "";
+  const title = page.title ? `<h3>${page.title}</h3>` : "";
+  const text = page.text ? `<p class="album-page-text">${page.text}</p>` : "";
+  let content = "";
+
+  switch (page.layout) {
+    case "intro":
+      content = `${eyebrow}${title}${text}<span class="album-rule"></span><span class="album-label">${page.label}</span>${counter}<span class="album-doodle">♡</span>`;
+      break;
+    case "letter":
+      content = `${eyebrow}<div class="album-letter-heading">${title}</div><div class="album-letter-copy">${paragraphs}</div>${image}<span class="album-date">${page.date || ""}</span><span class="album-signature">${page.signature || ""}</span><span class="album-stamp">♡</span>`;
+      break;
+    case "photo-feature":
+      content = `${eyebrow}${title}${image}<span class="album-caption">${page.caption || ""}</span>${text}`;
+      break;
+    case "photo-poster":
+      content = `${eyebrow}${image}<div class="album-poster-title">${title}</div><span class="album-caption">${page.caption || ""}</span>${text}`;
+      break;
+    case "collage":
+      content = `${eyebrow}${title}${text}<div class="album-collage">${(page.images || []).map((photo, index) => albumImageMarkup(photo, `Fotografia da memoria ${index + 1}`)).join("")}</div>`;
+      break;
+    case "quote":
+      content = `<span class="album-quote-mark">“</span>${title}<blockquote>${page.quote || ""}</blockquote><p class="album-page-text">${page.detail || ""}</p>${image}`;
+      break;
+    case "star-map":
+      content = `${eyebrow}${title}${text}<div class="album-star-map album-star-map--photo" aria-label="Fotografia da constelacao">${albumImageMarkup(page.image, "Fotografia da constelacao")}</div><span class="album-date">${page.date || ""}</span><span class="album-coordinates">${page.coordinates || ""}</span>`;
+      break;
+    case "memory":
+      content = `${eyebrow}${title}${image}<span class="album-caption">${page.caption || ""}</span>${text}`;
+      break;
+    case "photo-full":
+      content = `${eyebrow}${title}${image}<span class="album-caption">${page.caption || ""}</span>`;
+      break;
+    case "note":
+      content = `<span class="album-note-line"></span>${title}${text}<span class="album-rule"></span><span class="album-label">${page.label || ""}</span><small class="album-note-detail">${page.detail || ""}</small>`;
+      break;
+    case "polaroid":
+      content = `${eyebrow}${title}${text}<div class="album-polaroid">${image}<span>${page.caption || ""}</span></div>`;
+      break;
+    case "closing":
+      content = `${eyebrow}${title}${text}<span class="album-closing-heart">♥</span>${counter}<span class="album-label">a historia continua</span>`;
+      break;
+    case "photo-final":
+      content = `<div class="album-final-copy">${title}${text}</div>${image}<span class="album-caption">${page.caption || ""}</span>`;
+      break;
+    default:
+      content = `${eyebrow}${title}${text}${image}`;
+  }
+
+  return `<article class="album-page album-page--${side} album-layout-${page.layout || "default"}">${content}</article>`;
+}
+
+function renderAlbum() {
+  if (!albumElements.spread || !albumElements.modal) return;
+  const isCover = albumPageIndex === 0;
+  const spread = albumPages[albumPageIndex - 1];
+
+  albumElements.modal.classList.toggle("is-cover", isCover);
+  albumElements.book.classList.toggle("is-open", !isCover);
+  albumElements.cover.setAttribute("aria-hidden", String(!isCover));
+  albumElements.spread.setAttribute("aria-hidden", String(isCover));
+  albumElements.spread.innerHTML = spread
+    ? `${renderAlbumPanel(spread.left, "left")}${renderAlbumPanel(spread.right, "right")}`
+    : "";
+  albumElements.indicator.textContent = isCover ? "Capa" : `${albumPageIndex} / ${albumPages.length}`;
+  albumElements.previousButton.disabled = albumPageIndex === 0;
+  albumElements.nextButton.disabled = albumPageIndex === albumPages.length;
+
+  albumElements.spread.querySelectorAll("[data-album-image]").forEach((image) => {
+    image.addEventListener("error", () => {
+      console.error("Album: imagem nao encontrada", image.src);
+      const placeholder = document.createElement("div");
+      placeholder.className = "album-photo-placeholder album-photo-fallback";
+      placeholder.setAttribute("role", "img");
+      placeholder.setAttribute("aria-label", "Fotografia indisponivel");
+      placeholder.innerHTML = "<span>♡</span><small>memoria em revelacao</small>";
+      image.parentElement.replaceWith(placeholder);
+    }, { once: true });
+  });
+}
+
+function saveAlbumState() {
+  localStorage.setItem("albumLastPage", String(albumPageIndex));
+}
+
+function loadAlbumState() {
+  const savedPage = Number.parseInt(localStorage.getItem("albumLastPage") || "0", 10);
+  return Number.isInteger(savedPage) && savedPage >= 0 && savedPage <= albumPages.length ? savedPage : 0;
+}
+
+function goToAlbumPage(nextPage, direction = "forward") {
+  if (albumIsFlipping || nextPage < 0 || nextPage > albumPages.length || nextPage === albumPageIndex) return;
+  albumIsFlipping = true;
+  albumElements.book.classList.toggle("flip-backward", direction === "backward");
+  albumElements.book.classList.add("is-flipping");
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.setTimeout(() => {
+    albumPageIndex = nextPage;
+    saveAlbumState();
+    renderAlbum();
+    albumElements.book.classList.remove("is-flipping", "flip-backward");
+    albumIsFlipping = false;
+  }, reducedMotion ? 40 : 720);
+}
+
+function nextAlbumPage() {
+  goToAlbumPage(Math.min(albumPages.length, albumPageIndex + 1), "forward");
+}
+
+function previousAlbumPage() {
+  goToAlbumPage(Math.max(0, albumPageIndex - 1), "backward");
+}
+
+function openAlbum() {
+  if (!albumElements.modal) return;
+  albumLastFocusedElement = document.activeElement;
+  albumPageIndex = loadAlbumState();
+  renderAlbum();
+  albumElements.modal.classList.add("is-visible");
+  albumElements.modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("album-open");
+  startAlbumEmojis();
+  window.setTimeout(() => albumElements.book.focus(), 40);
+}
+
+function closeAlbum() {
+  if (!albumElements.modal) return;
+  albumElements.modal.classList.remove("is-visible");
+  albumElements.modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("album-open");
+  stopAlbumEmojis();
+  if (albumLastFocusedElement && typeof albumLastFocusedElement.focus === "function") {
+    albumLastFocusedElement.focus();
+  }
+}
+
+function createAlbumEmoji() {
+  if (!albumElements.emojiLayer || !albumElements.modal.classList.contains("is-visible")) return;
+  const symbols = ["♥", "♡", "❤", "💖", "💗", "💞", "✦", "✧"];
+  const emoji = document.createElement("span");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const duration = reducedMotion ? 4.8 : 3.8 + Math.random() * 3.2;
+
+  emoji.className = "album-floating-emoji";
+  emoji.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+  emoji.style.left = `${4 + Math.random() * 92}%`;
+  emoji.style.fontSize = `${0.8 + Math.random() * 0.85}rem`;
+  emoji.style.animationDuration = `${duration}s`;
+  emoji.style.setProperty("--emoji-drift", `${(Math.random() - 0.5) * 130}px`);
+  emoji.style.setProperty("--emoji-rotate", `${(Math.random() - 0.5) * 35}deg`);
+  albumElements.emojiLayer.appendChild(emoji);
+  window.setTimeout(() => emoji.remove(), duration * 1000 + 200);
+}
+
+function startAlbumEmojis() {
+  if (albumEmojiTimer || !albumElements.emojiLayer) return;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  createAlbumEmoji();
+  albumEmojiTimer = window.setInterval(createAlbumEmoji, reducedMotion ? 1300 : 620);
+}
+
+function stopAlbumEmojis() {
+  if (albumEmojiTimer) {
+    window.clearInterval(albumEmojiTimer);
+    albumEmojiTimer = null;
+  }
+  albumElements.emojiLayer?.replaceChildren();
+}
+
+function openAlbumLightbox(image) {
+  if (!albumElements.modal) return;
+  albumZoomImage = image;
+  albumZoomParent = image.parentElement;
+  albumZoomNextSibling = image.nextSibling;
+  albumZoomParent?.classList.add("is-photo-zoomed");
+  albumElements.modal.classList.add("album-photo-zooming");
+  document.body.classList.add("album-photo-zooming");
+  document.body.appendChild(image);
+  image.classList.add("is-zoomed");
+}
+
+function closeAlbumLightbox() {
+  if (albumZoomImage) {
+    albumZoomImage.classList.remove("is-zoomed");
+    if (albumZoomParent) {
+      if (albumZoomNextSibling && albumZoomNextSibling.parentNode === albumZoomParent) {
+        albumZoomParent.insertBefore(albumZoomImage, albumZoomNextSibling);
+      } else {
+        albumZoomParent.appendChild(albumZoomImage);
+      }
+      albumZoomParent.classList.remove("is-photo-zoomed");
+    }
+    albumZoomImage = null;
+    albumZoomParent = null;
+    albumZoomNextSibling = null;
+  }
+  albumElements.modal.classList.remove("album-photo-zooming");
+  document.body.classList.remove("album-photo-zooming");
+}
+
+function startAlbumPhotoPress(image) {
+  if (albumPressTimer) {
+    window.clearTimeout(albumPressTimer);
+  }
+
+  albumLongPressActive = false;
+  albumPressImage = image;
+  albumPressTimer = window.setTimeout(() => {
+    albumLongPressActive = true;
+    openAlbumLightbox(image);
+  }, 420);
+}
+
+function endAlbumPhotoPress() {
+  if (albumPressTimer) {
+    window.clearTimeout(albumPressTimer);
+    albumPressTimer = null;
+  }
+
+  if (albumLongPressActive) {
+    albumLongPressActive = false;
+    closeAlbumLightbox();
+  }
+
+  albumPressImage = null;
+}
+
+function initAlbum(photoCatalog) {
+  if (!albumElements.modal) return;
+  albumPhotoCatalog = Array.isArray(photoCatalog) && photoCatalog.length ? photoCatalog : defaultPhotoCatalog;
+  prepareAlbumPhotos();
+  albumPageIndex = 0;
+  renderAlbum();
+
+  albumElements.openButton.addEventListener("click", openAlbum);
+  albumElements.closeButton.addEventListener("click", closeAlbum);
+  albumElements.previousButton.addEventListener("click", previousAlbumPage);
+  albumElements.nextButton.addEventListener("click", nextAlbumPage);
+  albumElements.restartButton.addEventListener("click", () => {
+    albumPageIndex = 0;
+    saveAlbumState();
+    renderAlbum();
+  });
+  albumElements.cover.addEventListener("click", nextAlbumPage);
+  albumElements.spread.addEventListener("pointerdown", (event) => {
+    const image = event.target.closest("[data-album-image]");
+    if (!image) return;
+    event.preventDefault();
+    try {
+      image.setPointerCapture?.(event.pointerId);
+    } catch (error) {
+      return startAlbumPhotoPress(image);
+    }
+    startAlbumPhotoPress(image);
+  });
+  albumElements.spread.addEventListener("pointerup", (event) => {
+    if (event.target.closest("[data-album-image]")) endAlbumPhotoPress();
+  });
+  albumElements.spread.addEventListener("pointercancel", endAlbumPhotoPress);
+  albumElements.spread.addEventListener("pointerleave", (event) => {
+    if (event.pointerType === "mouse" && !albumLongPressActive) endAlbumPhotoPress();
+  });
+  albumElements.spread.addEventListener("click", (event) => {
+    const image = event.target.closest("[data-album-image]");
+    if (image) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if (event.target.closest(".album-page--left")) previousAlbumPage();
+    if (event.target.closest(".album-page--right")) nextAlbumPage();
+  });
+  albumElements.modal.addEventListener("click", (event) => {
+    if (event.target.dataset.albumClose === "true") closeAlbum();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (albumZoomImage) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeAlbumLightbox();
+      }
+      return;
+    }
+    if (!albumElements.modal.classList.contains("is-visible")) return;
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      nextAlbumPage();
+    }
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      previousAlbumPage();
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeAlbum();
+    }
+  });
+  document.addEventListener("pointerup", (event) => {
+    if (albumPressImage) {
+      endAlbumPhotoPress();
+    }
+  });
+  document.addEventListener("pointercancel", endAlbumPhotoPress);
+}
+
 async function init() {
   ensureInitialState();
   loadTheme();
-  await getPhotoSelection();
+  const photoCatalog = await getPhotoSelection();
   renderReason();
   initSpotifyPlayer();
   attachInteractions();
   initParticles();
+  initAlbum(photoCatalog);
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {

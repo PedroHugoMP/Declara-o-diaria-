@@ -136,12 +136,61 @@
           </div>
           <a class="primary-btn future-btn" href="https://drive.google.com/drive/folders/1tGpcQzYpJjeqIA4TYLcofcxe1Wuxj8Oa?usp=sharing" target="_blank" rel="noopener noreferrer">futuro</a>
         </article>
+
+        <article class="card album-launch-card">
+          <div>
+            <p class="eyebrow">Uma historia para folhear</p>
+            <h3>Nosso Álbum</h3>
+            <p>Abra as páginas da nossa constelação, com cartas, fotos e pequenos instantes guardados para sempre.</p>
+          </div>
+          <button id="open-album-btn" class="primary-btn album-launch-btn" type="button">Abrir álbum</button>
+        </article>
       </section>
     </div>
 
     <footer class="page-footer">
       <p>Feito com carinho pra você 💖</p>
     </footer>
+
+    <div id="album-modal" class="album-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="album-modal-title">
+      <div class="album-backdrop" data-album-close="true"></div>
+      <div id="album-emoji-layer" class="album-emoji-layer" aria-hidden="true"></div>
+      <section class="album-shell" aria-describedby="album-page-indicator">
+        <header class="album-toolbar">
+          <div>
+            <p class="album-kicker">Arquivo de nós dois</p>
+            <h2 id="album-modal-title">Nosso Álbum</h2>
+          </div>
+          <div class="album-toolbar-actions">
+            <button id="album-restart-btn" class="album-tool-btn" type="button" aria-label="Comecar o album do inicio">↺ <span>Inicio</span></button>
+            <button id="album-close-btn" class="album-tool-btn album-close-btn" type="button" aria-label="Fechar album">×</button>
+          </div>
+        </header>
+
+        <div class="album-stage">
+          <button id="album-prev-btn" class="album-nav album-nav-prev" type="button" aria-label="Pagina anterior">←</button>
+          <div id="album-book" class="album-book" tabindex="0" aria-label="Album interativo. Use as setas do teclado para folhear.">
+            <div class="album-cover" data-album-action="next">
+              <div class="cover-glow"></div>
+              <span class="cover-mark">✦</span>
+              <p class="cover-overline">UM LIVRO SOBRE</p>
+              <h3>PARA<br />SEMPRE</h3>
+              <p class="cover-quote">A nossa história não cabe<br />num álbum só — ainda bem.</p>
+              <p class="cover-names">Pedro <span>&amp;</span> Caio</p>
+              <span class="cover-bottom">FEITO COM AMOR</span>
+              <span class="cover-heart">♡</span>
+            </div>
+            <div id="album-spread" class="album-spread" aria-live="polite"></div>
+          </div>
+          <button id="album-next-btn" class="album-nav album-nav-next" type="button" aria-label="Proxima pagina">→</button>
+        </div>
+
+        <footer class="album-footer">
+          <span id="album-page-indicator">Capa</span>
+          <span class="album-footer-hint">clique nas paginas ou use as setas</span>
+        </footer>
+      </section>
+    </div>
 
     <script src="script.js"></script>
   </body>

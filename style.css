@@ -589,3 +589,1129 @@ body::before {
     padding: 18px;
   }
 }
+
+body.album-open {
+  overflow: hidden;
+}
+
+body.album-photo-zooming {
+  animation: none !important;
+  transform: none !important;
+}
+
+.album-launch-card {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 28px;
+  overflow: hidden;
+  position: relative;
+}
+
+.album-launch-card::after {
+  content: "♡";
+  position: absolute;
+  right: 16%;
+  bottom: -38px;
+  color: rgba(232, 111, 184, 0.12);
+  font: 9rem/1 Georgia, serif;
+  transform: rotate(-12deg);
+  pointer-events: none;
+}
+
+.album-launch-card h3 {
+  margin: 0 0 6px;
+  font-size: 1.35rem;
+}
+
+.album-launch-card p:not(.eyebrow) {
+  max-width: 620px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.album-launch-btn {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.album-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  visibility: hidden;
+  opacity: 0;
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.album-modal.is-visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.album-modal.album-photo-zooming::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(4, 3, 6, 0.58);
+  backdrop-filter: blur(9px);
+  pointer-events: none;
+}
+
+.album-modal.album-photo-zooming .album-shell {
+  z-index: 4;
+  overflow: visible;
+}
+
+.album-modal.album-photo-zooming .album-toolbar,
+.album-modal.album-photo-zooming .album-footer,
+.album-modal.album-photo-zooming .album-nav,
+.album-modal.album-photo-zooming .album-page > *:not(.is-photo-zoomed) {
+  filter: blur(7px) brightness(0.52);
+  transition: filter 0.25s ease;
+}
+
+.album-modal.album-photo-zooming .album-page > *:has(.is-photo-zoomed) {
+  filter: none;
+}
+
+.album-modal.album-photo-zooming .album-book,
+.album-modal.album-photo-zooming .album-spread,
+.album-modal.album-photo-zooming .album-page {
+  overflow: visible;
+}
+
+.album-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 8, 12, 0.78);
+  backdrop-filter: blur(14px);
+}
+
+.album-emoji-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.album-floating-emoji {
+  position: absolute;
+  bottom: -32px;
+  color: rgba(255, 191, 190, 0.72);
+  filter: drop-shadow(0 3px 9px rgba(116, 32, 52, 0.35));
+  opacity: 0;
+  animation: album-emoji-rise 5.2s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+.album-shell {
+  --album-ink: #2d1b1d;
+  --album-muted: #856b63;
+  --album-paper: #f2e9d9;
+  --album-paper-deep: #e2d0bd;
+  --album-wine: #541c28;
+  --album-red: #9f3942;
+  --album-gold: #b68b4b;
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 100%);
+  min-height: 0;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+  color: var(--album-ink);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.album-toolbar,
+.album-footer {
+  color: #f7eee4;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.album-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 auto 14px;
+  width: min(980px, calc(100% - 100px));
+}
+
+.album-kicker {
+  margin: 0 0 3px;
+  color: #d4aa86;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.album-toolbar h2 {
+  margin: 0;
+  font: 600 1.25rem Georgia, "Times New Roman", serif;
+  letter-spacing: 0.04em;
+}
+
+.album-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.album-tool-btn,
+.album-nav {
+  border: 1px solid rgba(248, 232, 215, 0.28);
+  color: #fff4eb;
+  background: rgba(73, 28, 35, 0.55);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+}
+
+.album-tool-btn:hover,
+.album-nav:hover:not(:disabled) {
+  background: rgba(159, 57, 66, 0.8);
+  transform: translateY(-2px);
+}
+
+.album-tool-btn:focus-visible,
+.album-nav:focus-visible,
+.album-book:focus-visible {
+  outline: 2px solid #e3b26d;
+  outline-offset: 4px;
+}
+
+.album-tool-btn {
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 5px;
+  font: 0.78rem "Segoe UI", Tahoma, sans-serif;
+}
+
+.album-close-btn {
+  width: 38px;
+  padding: 0;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.album-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  perspective: 1800px;
+}
+
+.album-book {
+  position: relative;
+  width: min(980px, calc(100% - 80px));
+  aspect-ratio: 1.48 / 1;
+  min-height: 420px;
+  max-height: calc(100vh - 152px);
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+  cursor: pointer;
+}
+
+.album-book::after {
+  content: "";
+  position: absolute;
+  inset: 6% 5% -5%;
+  z-index: -1;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.6);
+  filter: blur(24px);
+  transform: translateY(18px) rotate(-1deg);
+}
+
+.album-cover,
+.album-spread {
+  position: absolute;
+  inset: 0;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.album-cover {
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8%;
+  color: #f7e6d2;
+  text-align: center;
+  background: radial-gradient(circle at 68% 25%, rgba(172, 61, 68, 0.6), transparent 23%), linear-gradient(135deg, #722833, #35141e 72%);
+  border: 10px solid #3a1620;
+  box-shadow: inset 0 0 0 1px rgba(221, 174, 111, 0.42), inset 0 0 45px rgba(0, 0, 0, 0.45), 14px 18px 30px rgba(0, 0, 0, 0.36);
+  transform-origin: left center;
+  transition: transform 0.85s cubic-bezier(0.22, 0.8, 0.22, 1), opacity 0.35s ease;
+}
+
+.album-cover::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(221, 174, 111, 0.5);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.album-cover::after {
+  content: "";
+  position: absolute;
+  width: 120%;
+  height: 55%;
+  left: -10%;
+  bottom: -20%;
+  border-radius: 50%;
+  border: 1px solid rgba(221, 174, 111, 0.22);
+  transform: rotate(-18deg);
+}
+
+.album-modal.is-cover .album-cover {
+  transform: rotateY(0deg);
+}
+
+.album-modal:not(.is-cover) .album-cover {
+  opacity: 0;
+  pointer-events: none;
+  transform: rotateY(-168deg);
+}
+
+.cover-glow {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  top: -70px;
+  right: -52px;
+  border-radius: 50%;
+  background: rgba(210, 103, 97, 0.22);
+  filter: blur(22px);
+}
+
+.cover-mark,
+.cover-heart {
+  color: #dcb46f;
+  font-size: 1.2rem;
+}
+
+.cover-overline,
+.cover-bottom {
+  z-index: 1;
+  margin: 0;
+  color: #dcb46f;
+  font: 0.66rem "Segoe UI", Tahoma, sans-serif;
+  letter-spacing: 0.35em;
+}
+
+.album-cover h3 {
+  z-index: 1;
+  margin: 18px 0 14px;
+  font-size: clamp(2.2rem, 6vw, 5rem);
+  font-weight: 400;
+  line-height: 0.88;
+  letter-spacing: 0.04em;
+}
+
+.cover-quote {
+  z-index: 1;
+  margin: 0 0 25px;
+  font-size: clamp(0.9rem, 1.7vw, 1.2rem);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.cover-names {
+  z-index: 1;
+  margin: 0 0 auto;
+  font-size: clamp(1.1rem, 2vw, 1.55rem);
+  letter-spacing: 0.12em;
+}
+
+.cover-names span {
+  color: #dcb46f;
+  padding: 0 8px;
+}
+
+.cover-bottom {
+  z-index: 1;
+  margin-top: auto;
+}
+
+.cover-heart {
+  z-index: 1;
+  position: absolute;
+  right: 12%;
+  bottom: 10%;
+  font-size: 2.3rem;
+  transform: rotate(-15deg);
+}
+
+.album-spread {
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--album-paper);
+  box-shadow: inset 0 0 0 1px rgba(87, 50, 38, 0.24), 0 12px 28px rgba(0, 0, 0, 0.32);
+  transform-style: preserve-3d;
+  transition: opacity 0.2s ease;
+}
+
+.album-modal.is-cover .album-spread {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.album-modal:not(.is-cover) .album-spread {
+  opacity: 1;
+}
+
+.album-spread::before {
+  content: "";
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 22px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(74, 42, 31, 0.18), rgba(255, 255, 255, 0.38), rgba(74, 42, 31, 0.14), transparent);
+  pointer-events: none;
+}
+
+.album-page {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  padding: clamp(24px, 4.2vw, 58px);
+  background-color: var(--album-paper);
+  background-image: repeating-linear-gradient(0deg, rgba(106, 74, 52, 0.035) 0, rgba(106, 74, 52, 0.035) 1px, transparent 1px, transparent 4px), radial-gradient(circle at 18% 20%, rgba(176, 125, 90, 0.1), transparent 32%);
+  box-shadow: inset 0 0 38px rgba(109, 72, 42, 0.09);
+  backface-visibility: hidden;
+}
+
+.album-page--left {
+  border-radius: 7px 0 0 7px;
+  transform-origin: right center;
+}
+
+.album-page--right {
+  border-radius: 0 7px 7px 0;
+  transform-origin: left center;
+}
+
+.album-book.is-flipping .album-page--right {
+  animation: album-page-turn 720ms cubic-bezier(0.25, 0.76, 0.25, 1) both;
+  z-index: 8;
+}
+
+.album-book.is-flipping.flip-backward .album-page--left {
+  animation: album-page-return 720ms cubic-bezier(0.25, 0.76, 0.25, 1) both;
+  z-index: 8;
+}
+
+.album-page-eyebrow,
+.album-label,
+.album-date,
+.album-coordinates {
+  display: block;
+  color: var(--album-gold);
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.album-page h3 {
+  margin: 12px 0;
+  font-size: clamp(1.45rem, 3vw, 2.7rem);
+  font-weight: 400;
+  line-height: 1.06;
+}
+
+.album-page-text {
+  color: var(--album-muted);
+  font-size: clamp(0.82rem, 1.4vw, 1rem);
+  line-height: 1.65;
+}
+
+.album-rule {
+  display: block;
+  width: 48px;
+  height: 1px;
+  margin: 24px 0 18px;
+  background: var(--album-gold);
+}
+
+.album-counter {
+  display: block;
+  margin-top: 6px;
+  color: var(--album-red);
+  font-size: clamp(2.1rem, 4vw, 3.8rem);
+  font-weight: 400;
+}
+
+.album-counter span {
+  color: var(--album-muted);
+  font-size: 0.9rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.album-doodle,
+.album-closing-heart {
+  position: absolute;
+  right: 12%;
+  bottom: 14%;
+  color: var(--album-red);
+  font-size: 4rem;
+  transform: rotate(-15deg);
+}
+
+.album-letter-heading {
+  margin-bottom: 14px;
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+}
+
+.album-letter-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 92%;
+  color: var(--album-ink);
+  font-size: clamp(0.74rem, 1.2vw, 0.9rem);
+  line-height: 1.5;
+}
+
+.album-letter-copy p {
+  margin: 0 0 10px;
+}
+
+.album-letter .album-photo-wrap,
+.album-page--right .album-photo-wrap {
+  position: relative;
+}
+
+.album-letter .album-photo-wrap {
+  width: 30%;
+}
+
+.album-date {
+  margin-top: 14px;
+  letter-spacing: 0.12em;
+}
+
+.album-signature {
+  display: block;
+  margin-top: 8px;
+  color: var(--album-red);
+  font-size: 0.86rem;
+  font-style: italic;
+}
+
+.album-stamp {
+  position: absolute;
+  right: 12%;
+  bottom: 12%;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid var(--album-red);
+  border-radius: 50%;
+  color: var(--album-red);
+  font-size: 1.6rem;
+  transform: rotate(12deg);
+}
+
+.album-photo-wrap {
+  overflow: hidden;
+  border: 7px solid #f8f0e3;
+  background: #d6c8b6;
+  box-shadow: 4px 8px 14px rgba(65, 40, 28, 0.23);
+}
+
+.album-photo-wrap img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  aspect-ratio: 4 / 5;
+  cursor: zoom-in;
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
+  position: relative;
+  z-index: 1;
+  transform: scale(1);
+  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.25s ease;
+}
+
+.album-photo-wrap img.is-zoomed,
+.album-modal > img.is-zoomed,
+body > img.is-zoomed {
+  position: fixed !important;
+  z-index: 60 !important;
+  inset: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 88vw !important;
+  max-height: 82vh !important;
+  aspect-ratio: auto;
+  object-fit: contain !important;
+  margin: auto !important;
+  border: 8px solid #f8f0e3;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.62);
+  transform: none !important;
+  filter: none !important;
+  cursor: zoom-out;
+}
+
+.album-photo-wrap.is-photo-zoomed {
+  z-index: 30;
+  overflow: visible;
+}
+
+.album-photo-wrap.is-photo-zoomed img.is-zoomed {
+  z-index: 60;
+}
+
+.album-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.album-lightbox.is-visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.album-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 4, 7, 0.9);
+  backdrop-filter: blur(12px);
+  cursor: zoom-out;
+}
+
+.album-lightbox-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  max-width: min(1100px, 100%);
+  max-height: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.album-lightbox-content img {
+  display: block;
+  width: auto;
+  max-width: min(94vw, 1100px);
+  height: auto;
+  max-height: calc(100vh - 110px);
+  object-fit: contain;
+  border: 8px solid #f8f0e3;
+  background: #17141b;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
+  transform: scale(0.94);
+  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.album-lightbox.is-visible .album-lightbox-content img {
+  transform: scale(1);
+}
+
+.album-lightbox-content p {
+  margin: 0;
+  color: #f2dfc2;
+  font: 0.8rem "Segoe UI", Tahoma, sans-serif;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.album-lightbox-close {
+  position: absolute;
+  z-index: 2;
+  top: -16px;
+  right: -16px;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(255, 240, 220, 0.45);
+  border-radius: 50%;
+  color: #fff7ea;
+  background: rgba(61, 22, 30, 0.9);
+  cursor: pointer;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.album-lightbox-close:hover {
+  background: #9f3942;
+}
+
+.album-lightbox-close:focus-visible {
+  outline: 2px solid #e3b26d;
+  outline-offset: 4px;
+}
+
+.album-layout-photo-feature .album-photo-wrap,
+.album-layout-memory .album-photo-wrap,
+.album-layout-photo-poster .album-photo-wrap {
+  width: min(100%, 260px);
+  margin: 20px 0 9px;
+  transform: rotate(-2deg);
+}
+
+.album-layout-photo-poster .album-photo-wrap {
+  margin-left: auto;
+  transform: rotate(2deg);
+}
+
+.album-caption {
+  display: block;
+  color: var(--album-muted);
+  font-size: 0.73rem;
+  font-style: italic;
+}
+
+.album-poster-title {
+  margin-top: 20px;
+}
+
+.album-collage {
+  position: relative;
+  height: 62%;
+  margin-top: 16px;
+}
+
+.album-collage .album-photo-wrap {
+  position: absolute;
+  width: 42%;
+}
+
+.album-collage .album-photo-wrap:nth-child(1) { top: 4%; left: 2%; transform: rotate(-7deg); }
+.album-collage .album-photo-wrap:nth-child(2) { top: 14%; right: 3%; transform: rotate(6deg); }
+.album-collage .album-photo-wrap:nth-child(3) { bottom: 0; left: 29%; transform: rotate(-2deg); }
+
+.album-quote-mark {
+  display: block;
+  height: 34px;
+  color: var(--album-red);
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.album-page blockquote {
+  margin: 12px 0 22px;
+  color: var(--album-ink);
+  font-size: clamp(1.15rem, 2.2vw, 2rem);
+  line-height: 1.22;
+}
+
+.album-layout-quote .album-photo-wrap {
+  width: 33%;
+  margin-top: 18px;
+  transform: rotate(-5deg);
+}
+
+.album-star-map {
+  position: relative;
+  height: 48%;
+  min-height: 150px;
+  margin: 18px -12px 10px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: radial-gradient(circle at 32% 26%, rgba(104, 128, 174, 0.32), transparent 22%), #11151d;
+  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.7);
+}
+
+.album-star-map--photo {
+  height: 48%;
+  min-height: 150px;
+  margin: 18px 0 10px;
+  overflow: hidden;
+  background: #11151d;
+}
+
+.album-star-map--photo .album-photo-wrap {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  border: 0;
+  box-shadow: none;
+}
+
+.album-star-map--photo .album-photo-wrap img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: cover;
+}
+
+.album-star-map i {
+  position: absolute;
+  left: calc(9% + (var(--star-index) * 7.2%));
+  top: calc(16% + ((var(--star-index) * 29%) % 67%));
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff5d4;
+  box-shadow: 0 0 8px 2px rgba(255, 240, 186, 0.7);
+}
+
+.star-map-line {
+  position: absolute;
+  height: 1px;
+  transform-origin: left center;
+  background: rgba(219, 194, 136, 0.6);
+}
+
+.line-one { width: 34%; left: 16%; top: 35%; transform: rotate(25deg); }
+.line-two { width: 25%; left: 43%; top: 51%; transform: rotate(-38deg); }
+.line-three { width: 26%; left: 61%; top: 29%; transform: rotate(52deg); }
+
+.constellation-heart {
+  position: absolute;
+  right: 22%;
+  bottom: 18%;
+  color: #d9bb7e;
+  font-size: 2.4rem;
+  font-weight: 400;
+  transform: rotate(-12deg);
+}
+
+.album-coordinates {
+  margin-top: 8px;
+  color: var(--album-muted);
+  font-size: 0.54rem;
+  letter-spacing: 0.1em;
+}
+
+.album-layout-photo-full .album-photo-wrap {
+  width: 100%;
+  margin-top: 20px;
+  border-width: 8px;
+}
+
+.album-layout-photo-full .album-photo-wrap img,
+.album-layout-photo-final .album-photo-wrap img {
+  aspect-ratio: 4 / 5;
+}
+
+.album-note-line {
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-bottom: 28px;
+  background: var(--album-gold);
+}
+
+.album-note-detail {
+  display: block;
+  margin-top: 18px;
+  color: var(--album-muted);
+  font-style: italic;
+}
+
+.album-polaroid {
+  width: min(76%, 250px);
+  margin: 20px auto 0;
+  padding: 10px 10px 14px;
+  background: #f8f1e5;
+  box-shadow: 6px 10px 16px rgba(65, 40, 28, 0.2);
+  transform: rotate(-4deg);
+}
+
+.album-polaroid .album-photo-wrap {
+  border: 0;
+  box-shadow: none;
+}
+
+.album-polaroid span {
+  display: block;
+  margin-top: 9px;
+  color: var(--album-muted);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.album-closing-heart {
+  position: static;
+  display: block;
+  margin: 30px 0 15px;
+  color: var(--album-red);
+  font-size: 3rem;
+}
+
+.album-final-copy {
+  position: absolute;
+  z-index: 2;
+  left: 12%;
+  right: 12%;
+  top: 11%;
+  color: #fff7ea;
+  text-align: center;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.7);
+}
+
+.album-layout-photo-final {
+  padding: 0;
+  background: #24151b;
+}
+
+.album-layout-photo-final .album-photo-wrap {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+.album-layout-photo-final .album-photo-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(25, 12, 17, 0.7), transparent 48%, rgba(25, 12, 17, 0.58));
+}
+
+.album-layout-photo-final .album-caption {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 11%;
+  color: #f2dfc2;
+  text-align: center;
+}
+
+.album-photo-placeholder {
+  display: grid;
+  min-height: 120px;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  color: var(--album-gold);
+  background: linear-gradient(135deg, #38222a, #17141b);
+  font-size: 2rem;
+}
+
+.album-photo-placeholder small {
+  color: #dac8b5;
+  font: 0.62rem "Segoe UI", Tahoma, sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.album-nav {
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+}
+
+.album-nav:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+
+.album-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(980px, calc(100% - 100px));
+  margin: 14px auto 0;
+  color: #e0cbbb;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.album-footer-hint {
+  color: rgba(224, 203, 187, 0.62);
+  font-size: 0.68rem;
+}
+
+@keyframes album-page-turn {
+  0% { transform: rotateY(0); box-shadow: none; }
+  45% { box-shadow: -25px 8px 24px rgba(46, 23, 20, 0.28); }
+  100% { transform: rotateY(-168deg); box-shadow: -5px 8px 14px rgba(46, 23, 20, 0.1); }
+}
+
+@keyframes album-page-return {
+  0% { transform: rotateY(0); box-shadow: none; }
+  45% { box-shadow: 25px 8px 24px rgba(46, 23, 20, 0.28); }
+  100% { transform: rotateY(168deg); box-shadow: 5px 8px 14px rgba(46, 23, 20, 0.1); }
+}
+
+@keyframes album-emoji-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.72) rotate(0deg);
+  }
+  12% {
+    opacity: 0.78;
+  }
+  82% {
+    opacity: 0.38;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--emoji-drift, 0px), -110vh, 0) scale(1.12) rotate(var(--emoji-rotate, 0deg));
+  }
+}
+
+@media (max-width: 820px) {
+  .album-modal {
+    padding: 14px;
+  }
+
+  .album-toolbar,
+  .album-footer {
+    width: 100%;
+  }
+
+  .album-stage {
+    gap: 7px;
+  }
+
+  .album-book {
+    width: calc(100% - 72px);
+    min-height: 480px;
+    aspect-ratio: 0.78 / 1;
+    max-height: calc(100vh - 164px);
+  }
+
+  .album-spread {
+    grid-template-columns: 1fr;
+  }
+
+  .album-spread::before {
+    display: none;
+  }
+
+  .album-page--left {
+    display: none;
+  }
+
+  .album-page--right {
+    border-radius: 7px;
+  }
+
+  .album-nav {
+    flex-basis: 34px;
+    width: 34px;
+    height: 34px;
+    font-size: 1.2rem;
+  }
+
+  .album-footer-hint {
+    display: none;
+  }
+
+  .album-tool-btn span {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .album-modal {
+    align-items: flex-start;
+    padding: 12px 8px;
+    height: 100dvh;
+  }
+
+  .album-toolbar h2 {
+    font-size: 1rem;
+  }
+
+  .album-book {
+    width: calc(100% - 46px);
+    min-height: 0;
+    max-height: calc(100vh - 138px);
+    aspect-ratio: 0.72 / 1;
+  }
+
+  .album-page {
+    padding: 27px 23px;
+  }
+
+  .album-page h3 {
+    font-size: 1.65rem;
+  }
+
+  .album-page-text {
+    font-size: 0.82rem;
+  }
+
+  .album-toolbar {
+    margin-bottom: 8px;
+  }
+
+  .album-footer {
+    margin-top: 8px;
+  }
+
+  .album-launch-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .album-lightbox {
+    padding: 18px;
+  }
+
+  .album-lightbox-content img {
+    max-width: calc(100vw - 36px);
+    max-height: calc(100vh - 92px);
+    border-width: 5px;
+  }
+
+  .album-lightbox-close {
+    top: -12px;
+    right: -12px;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .album-floating-emoji {
+    animation-duration: 0.01ms;
+  }
+
+  .album-modal,
+  .album-lightbox,
+  .album-cover,
+  .album-tool-btn,
+  .album-nav {
+    transition: none;
+  }
+
+  .album-book.is-flipping .album-page--right,
+  .album-book.is-flipping.flip-backward .album-page--left {
+    animation-duration: 40ms;
+  }
+}

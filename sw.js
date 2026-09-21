@@ -1,4 +1,4 @@
-const cacheName = "motivos-love-v1";
+const cacheName = "motivos-love-v2";
 const assets = ["./", "./index.html", "./style.css", "./script.js", "./manifest.json"];
 
 self.addEventListener("install", (event) => {
