@@ -15,8 +15,28 @@ const defaultPhotoCatalog = [
   "WhatsApp Image 2026-07-30 at 4.24.12 PM.jpeg",
   "WhatsApp Image 2026-07-30 at 4.24.13 PM.jpeg",
   "WhatsApp Image 2026-07-30 at 4.36.50 PM.jpeg",
-  "WhatsApp Image 2026-07-30 at 4.37.26 PM.jpeg"
+  "WhatsApp Image 2026-07-30 at 4.37.26 PM.jpeg",
+  "WhatsApp Image 2026-09-21 at 1.52.35 PM.jpeg",
+  "WhatsApp Image 2026-09-21 at 1.53.39 PM (1).jpeg",
+  "WhatsApp Image 2026-09-21 at 1.53.39 PM (2).jpeg",
+  "WhatsApp Image 2026-09-21 at 1.53.39 PM.jpeg",
+  "WhatsApp Image 2026-09-21 at 1.55.48 PM.jpeg",
+  "WhatsApp Image 2026-09-21 at 1.55.49 PM (1).jpeg",
+  "WhatsApp Image 2026-09-21 at 1.55.49 PM.jpeg"
 ];
+
+function normalizePhotoCatalog(items) {
+  const normalized = Array.isArray(items) ? items : [];
+  return [...new Set(
+    normalized
+      .map((photo) => {
+        if (typeof photo === "string") return photo.trim();
+        if (photo && typeof photo === "object") return (photo.src || photo.url || photo.name || "").trim();
+        return "";
+      })
+      .filter(Boolean)
+  )];
+}
 
 const photoMessages = {
   "Foto.1.jpeg": "Porque seu abraço é o lugar onde encontro paz.",
@@ -36,6 +56,16 @@ const photoMessages = {
   "Foto.15.jpeg": "Porque o seu carinho me faz crescer cada dia mais.",
   "Foto.16.jpeg": "Porque esses eram apenas 30 motivos... e eu ainda tenho milhares para te dizer."
 };
+
+const dailyMessagePool = [
+  "Você me fez sentir coisas que jamais senti antes, marejar meus olhos só com a beleza de tua palavra!",
+  "Sempre manterei vivo o sentimento de te conhecer pois sempre que te encontro descubro que a vida pode ser um pouco mais bela!",
+  "Com você não tenho medo de ter o amor que queima, com você o fogo cura e cauteriza onde não sabia que estava ferido!",
+  "A fronteira do destino sempre esteve entre nós e ao cair percebi que sempre estive a sua espera pois sinto que te conheço como se fosse parte minha!",
+  "A distância é cruel, maltrata-me, porém, ao derrotá-la sei que viverei algo que jamais será vivenciado em qualquer idealização já feita, pois, meu ideal estará ao meu lado todos os dias!",
+  "O calor de tua palavra me aquece a alma, a deixa viva, acreditando que poderá ocorrer um futuro, um amanhã melhor que o hoje!",
+  "Minha melhor versão é ao teu lado, ao teu lado me sinto completo, a vida não me pesa, o amanhã não me assusta!"
+];
 
 const state = {
   selectedPhoto: null,
@@ -319,24 +349,19 @@ async function loadPhotoCatalog() {
     const response = await fetch(`${photoFolder}/photos.json`, { cache: "no-store" });
     if (!response.ok) throw new Error("manifest unavailable");
     const data = await response.json();
-    if (Array.isArray(data.photos) && data.photos.length > 0) {
-      return data.photos
-        .map((photo) => {
-          if (typeof photo === "string") {
-            return photo;
-          }
-          if (photo && typeof photo === "object") {
-            return photo.src || photo.url || photo.name || "";
-          }
-          return "";
-        })
-        .filter(Boolean);
+    const mergedCatalog = normalizePhotoCatalog([
+      ...defaultPhotoCatalog,
+      ...(Array.isArray(data.photos) ? data.photos : [])
+    ]);
+
+    if (mergedCatalog.length > 0) {
+      return mergedCatalog;
     }
   } catch (error) {
-    return defaultPhotoCatalog;
+    return normalizePhotoCatalog(defaultPhotoCatalog);
   }
 
-  return defaultPhotoCatalog;
+  return normalizePhotoCatalog(defaultPhotoCatalog);
 }
 
 async function getPhotoSelection() {
@@ -378,17 +403,23 @@ function getMessageForToday() {
   }
 
   const storedMessages = JSON.parse(localStorage.getItem("messageHistory") || "[]");
-  const currentMessage = photoMessages[state.selectedPhoto] || "Uma nova foto para o seu dia.";
+  const allAvailableMessages = [...new Set([...Object.values(photoMessages), ...dailyMessagePool])];
+  const preferredMessage = photoMessages[state.selectedPhoto] || allAvailableMessages[Math.floor(Math.random() * allAvailableMessages.length)];
   const recentMessages = storedMessages.filter((entry) => {
     const entryDate = new Date(entry.date);
     const diffDays = Math.floor((today - entryDate) / (1000 * 60 * 60 * 24));
     return diffDays <= 15;
   });
 
-  const usedRecently = recentMessages.some((entry) => entry.message === currentMessage);
-  if (usedRecently) {
-    const fallback = Object.values(photoMessages).find((message) => !recentMessages.some((entry) => entry.message === message));
-    return fallback || currentMessage;
+  const availableMessages = allAvailableMessages.filter((message) => !recentMessages.some((entry) => entry.message === message));
+  let currentMessage = preferredMessage;
+
+  if (recentMessages.some((entry) => entry.message === currentMessage)) {
+    currentMessage = availableMessages.find((message) => message !== currentMessage) || preferredMessage;
+  }
+
+  if (availableMessages.length > 0 && !availableMessages.includes(currentMessage)) {
+    currentMessage = availableMessages[0];
   }
 
   storedMessages.push({ date: today.toISOString(), message: currentMessage });
