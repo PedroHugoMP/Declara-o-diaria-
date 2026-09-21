@@ -555,42 +555,57 @@ function createHeartBurst(x, y) {
   elements.heartLayer.appendChild(fragment);
 }
 
-function initSpotifyPlayer() {
-  const iframe = document.getElementById("spotify-embed");
+function initMusicPlayer() {
+  const audio = document.getElementById("couple-audio");
   const playButton = document.getElementById("spotify-play-btn");
-  const hint = document.getElementById("spotify-hint");
-  if (!iframe) return;
+  if (!audio) return;
+  audio.muted = true;
 
-  const playlistUrl = "https://open.spotify.com/playlist/1llw3TDJxgIloAVXuGzLNA?si=e91c393fca2c4416";
-  const baseSrc = iframe.getAttribute("src") || "";
-  const autoplaySrc = baseSrc.includes("autoplay=")
-    ? baseSrc.replace(/autoplay=[^&]+/, "autoplay=1")
-    : `${baseSrc}${baseSrc.includes("?") ? "&" : "?"}autoplay=1`;
+  const iframe = document.getElementById("spotify-embed");
+  const tracks = {
+    home: "Musicas/Por%20Voc%C3%AA.mp3",
+    album: "Musicas/Alinhamento%20Milenar.mp3"
+  };
 
-  iframe.setAttribute("src", autoplaySrc);
+  function playTrack(track) {
+    if (!audio.src.endsWith(track)) {
+      audio.src = track;
+      audio.load();
+    }
+    audio.play().catch(() => {});
+  }
+
+  window.playAlbumTrack = () => {
+    audio.muted = false;
+    playTrack(tracks.album);
+  };
+  playTrack(tracks.home);
+  window.playPhotoTrack = () => {
+    audio.muted = false;
+    audio.volume = 1;
+    audio.play().catch(() => {});
+  };
 
   if (playButton) {
     playButton.addEventListener("click", () => {
-      if (hint) {
-        hint.textContent = "Abrindo a playlist no Spotify...";
-      }
+      const playlistUrl = "https://open.spotify.com/playlist/1llw3TDJxgIloAVXuGzLNA?si=e91c393fca2c4416";
       window.open(playlistUrl, "_blank", "noopener,noreferrer");
     });
   }
 
-  window.addEventListener("load", () => {
-    setTimeout(() => {
-      iframe.setAttribute("src", autoplaySrc);
-      if (hint) {
-        hint.textContent = "Se o navegador bloquear, clique em Tocar agora.";
-      }
-    }, 800);
-  });
+  if (iframe) {
+    const baseSrc = iframe.getAttribute("src") || "";
+    const autoplaySrc = baseSrc.includes("autoplay=")
+      ? baseSrc.replace(/autoplay=[^&]+/, "autoplay=1")
+      : `${baseSrc}${baseSrc.includes("?") ? "&" : "?"}autoplay=1`;
+    iframe.setAttribute("src", autoplaySrc);
+  }
 }
 
 function attachInteractions() {
   elements.photo.addEventListener("click", (event) => {
     const rect = elements.photo.getBoundingClientRect();
+    window.playPhotoTrack?.();
     createHeartBurst(event.clientX, event.clientY);
   });
 
@@ -872,6 +887,7 @@ function previousAlbumPage() {
 
 function openAlbum() {
   if (!albumElements.modal) return;
+  window.playAlbumTrack?.();
   albumLastFocusedElement = document.activeElement;
   albumPageIndex = loadAlbumState();
   renderAlbum();
@@ -1067,7 +1083,7 @@ async function init() {
   loadTheme();
   const photoCatalog = await getPhotoSelection();
   renderReason();
-  initSpotifyPlayer();
+  initMusicPlayer();
   attachInteractions();
   initParticles();
   initAlbum(photoCatalog);
